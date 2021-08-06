@@ -15,6 +15,7 @@ class EventListener implements Listener {
         if(is_array($worlds) && !empty($worlds) && !in_array($lvl, $worlds))
             return;
         TreeCapitator::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function(int $currentTick)use($event):void{
+            if($event->isCancelled()) return;
             $b = $event->getBlock();
             if(!in_array($b->getId(), [Block::LOG, Block::LOG2, Block::LEAVES, Block::LEAVES2])) return;
             TreeCapitator::startBreakTree($event->getPlayer(), $b, [Block::LOG => 0, Block::LOG2 => 1, Block::LEAVES => 0, Block::LEAVES2 => 1][$b->getId()], $b->getDamage());
