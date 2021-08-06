@@ -17,6 +17,7 @@ class TreeCapitator extends PluginBase {
 
     public function onEnable() {
         self::$instance = $this;
+        $this->saveDefaultConfig();
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
     }
 
@@ -26,7 +27,7 @@ class TreeCapitator extends PluginBase {
     }
 
     private static function convertToEntity(Player $player, Position $position, int $type, int $meta, int $loop = 0): void {
-        if($loop > 30) return;
+        if($loop > self::$instance->getConfig()->getNested("max-blocks")) return;
         $block = $position->level->getBlock($position);
         if(!in_array($block->getId(), [Block::LOG, Block::LOG2, Block::LEAVES, Block::LEAVES2])) return;
         $item = $player->getInventory()->getItemInHand();

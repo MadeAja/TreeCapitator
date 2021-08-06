@@ -1,0 +1,9 @@
+---
+# Make it enabled-worlds: [] or delete to enable on all worlds
+enabled-worlds:
+  - world
+  - otherworld
+
+# Maximum blocks at once
+max-blocks: 32
+...

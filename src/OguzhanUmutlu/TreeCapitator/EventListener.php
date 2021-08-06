@@ -20,6 +20,10 @@ class EventListener implements Listener {
     }
 
     public function onBreak(BlockBreakEvent $event) {
+        $lvl = $event->getBlock()->level->getFolderName();
+        $worlds = TreeCapitator::getInstance()->getConfig()->getNested("enabled-worlds");
+        if(is_array($worlds) && !empty($worlds) && !in_array($lvl, $worlds))
+            return;
         TreeCapitator::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function(int $currentTick)use($event):void{
             $b = $event->getBlock();
             if(!in_array($b->getId(), [Block::LOG, Block::LOG2, Block::LEAVES, Block::LEAVES2])) return;
