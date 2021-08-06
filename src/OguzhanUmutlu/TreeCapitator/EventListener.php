@@ -8,6 +8,7 @@ use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityBlockChangeEvent;
 use pocketmine\event\Listener;
 use pocketmine\item\Item;
+use pocketmine\scheduler\ClosureTask;
 
 class EventListener implements Listener {
     public function blockDropEvent(EntityBlockChangeEvent $event) {
@@ -19,8 +20,10 @@ class EventListener implements Listener {
     }
 
     public function onBreak(BlockBreakEvent $event) {
-        $b = $event->getBlock();
-        if(!in_array($b->getId(), [Block::LOG, Block::LOG2, Block::LEAVES, Block::LEAVES2])) return;
-        TreeCapitator::startBreakTree($event->getPlayer(), $b, [Block::LOG => 0, Block::LOG2 => 1, Block::LEAVES => 0, Block::LEAVES2 => 1][$b->getId()], $b->getDamage());
+        TreeCapitator::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function(int $currentTick)use($event):void{
+            $b = $event->getBlock();
+            if(!in_array($b->getId(), [Block::LOG, Block::LOG2, Block::LEAVES, Block::LEAVES2])) return;
+            TreeCapitator::startBreakTree($event->getPlayer(), $b, [Block::LOG => 0, Block::LOG2 => 1, Block::LEAVES => 0, Block::LEAVES2 => 1][$b->getId()], $b->getDamage());
+        }), 1);
     }
 }
