@@ -3,25 +3,15 @@
 namespace OguzhanUmutlu\TreeCapitator;
 
 use pocketmine\block\Block;
-use pocketmine\entity\object\FallingBlock;
 use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\entity\EntityBlockChangeEvent;
 use pocketmine\event\Listener;
-use pocketmine\item\Item;
 use pocketmine\scheduler\ClosureTask;
 
 class EventListener implements Listener {
-    public function blockDropEvent(EntityBlockChangeEvent $event) {
-        $entity = $event->getEntity();
-        if(!$entity instanceof FallingBlock || !$entity->namedtag->hasTag("TreeCapitator")) return;
-        $event->setCancelled();
-        $entity->level->dropItem($entity, Item::nbtDeserialize($entity->namedtag->getCompoundTag("TreeCapitator")));
-        $entity->flagForDespawn();
-    }
-
     public function onBreak(BlockBreakEvent $event) {
         $lvl = $event->getBlock()->level->getFolderName();
         $worlds = TreeCapitator::getInstance()->getConfig()->getNested("enabled-worlds");
+        if(!$event->getPlayer()->hasPermission("tree"."capitator.use"))
         if(is_array($worlds) && !empty($worlds) && !in_array($lvl, $worlds))
             return;
         TreeCapitator::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function(int $currentTick)use($event):void{

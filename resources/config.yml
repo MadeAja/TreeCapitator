@@ -6,4 +6,9 @@ enabled-worlds:
 
 # Maximum blocks at once
 max-blocks: 32
+
+# Should it damage to players when falling?
+# Type 0 for no damage
+# 2 HP = 1 Heart
+fall-damage: 1 #HP
 ...

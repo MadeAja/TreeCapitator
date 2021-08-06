@@ -3,4 +3,8 @@ name: TreeCapitator
 version: 1.0.0
 api: 3.0.0
 main: OguzhanUmutlu\TreeCapitator\TreeCapitator
+
+permissions:
+  treecapitator.use:
+    default: op
 ...

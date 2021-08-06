@@ -4,7 +4,6 @@ namespace OguzhanUmutlu\TreeCapitator;
 
 use pocketmine\block\Block;
 use pocketmine\entity\Entity;
-use pocketmine\item\Item;
 use pocketmine\item\TieredTool;
 use pocketmine\level\particle\DestroyBlockParticle;
 use pocketmine\level\Position;
@@ -19,6 +18,7 @@ class TreeCapitator extends PluginBase {
         self::$instance = $this;
         $this->saveDefaultConfig();
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
+        Entity::registerEntity(FallingTreeEntity::class, true, ["FallingTreeEntity"]);
     }
 
     /*** @return TreeCapitator */
@@ -33,11 +33,13 @@ class TreeCapitator extends PluginBase {
         $item = $player->getInventory()->getItemInHand();
         if(!$item instanceof TieredTool) return;
         $item->applyDamage(1);
-        $nbt = Entity::createBaseNBT($position);
+        $nbt = Entity::createBaseNBT($position->add(0.5, 0, 0.5));
         $nbt->setInt("TileID", $block->getId());
         $nbt->setByte("Data", $block->getDamage());
-        $nbt->setTag(Item::get($block->getItemId(), $block->getDamage())->nbtSerialize(0, "TreeCapitator"));
-        $entity = Entity::createEntity("FallingSand", $position->level, $nbt);
+        $drops = $block->getDrops($item);
+        $entity = Entity::createEntity("FallingTreeEntity", $position->level, $nbt);
+        if(!$entity instanceof FallingTreeEntity) return;
+        $entity->drops = $drops;
         $entity->spawnToAll();
         $position->level->setBlock($position, Block::get(0));
         $position->level->addParticle(new DestroyBlockParticle($block, $block));
