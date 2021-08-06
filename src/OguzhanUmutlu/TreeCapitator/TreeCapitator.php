@@ -5,9 +5,9 @@ namespace OguzhanUmutlu\TreeCapitator;
 use pocketmine\block\Block;
 use pocketmine\entity\Entity;
 use pocketmine\item\Item;
+use pocketmine\item\TieredTool;
 use pocketmine\level\particle\DestroyBlockParticle;
 use pocketmine\level\Position;
-use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 
@@ -29,6 +29,9 @@ class TreeCapitator extends PluginBase {
         if($loop > 30) return;
         $block = $position->level->getBlock($position);
         if(!in_array($block->getId(), [Block::LOG, Block::LOG2, Block::LEAVES, Block::LEAVES2])) return;
+        $item = $player->getInventory()->getItemInHand();
+        if(!$item instanceof TieredTool) return;
+        $item->applyDamage(1);
         $nbt = Entity::createBaseNBT($position);
         $nbt->setInt("TileID", $block->getId());
         $nbt->setByte("Data", $block->getDamage());
