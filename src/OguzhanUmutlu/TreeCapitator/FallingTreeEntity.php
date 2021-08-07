@@ -7,13 +7,18 @@ use pocketmine\block\BlockFactory;
 use pocketmine\block\Fallable;
 use pocketmine\entity\Entity;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\item\Item;
 use pocketmine\level\Position;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\IntTag;
 use UnexpectedValueException;
 
 class FallingTreeEntity extends Entity {
+    /*** @var Item[] */
     public $drops = [];
+    /*** @var Vector3|null */
+    public $startPos = null;
     public const NETWORK_ID = self::FALLING_BLOCK;
 
     public $width = 0.98;
@@ -56,6 +61,9 @@ class FallingTreeEntity extends Entity {
     public function attack(EntityDamageEvent $source) : void{
         if($source->getCause() === EntityDamageEvent::CAUSE_VOID){
             parent::attack($source);
+        } else {
+            $source->setCancelled();
+            parent::attack($source);
         }
     }
 
@@ -76,6 +84,8 @@ class FallingTreeEntity extends Entity {
     public function entityBaseTick(int $tickDiff = 1) : bool{
         if($this->closed)
             return false;
+        if(!$this->startPos)
+            $this->startPos = $this->asVector3();
         $hasUpdate = parent::entityBaseTick($tickDiff);
         if(!$this->isFlaggedForDespawn()){
             $pos = Position::fromObject($this->add(-$this->width / 2, $this->height, -$this->width / 2)->floor(), $this->getLevelNonNull());
@@ -84,8 +94,34 @@ class FallingTreeEntity extends Entity {
                 $this->block->tickFalling();
             if($this->onGround) {
                 $this->flagForDespawn();
-                foreach($this->drops as $drop)
-                    $this->level->dropItem($this, $drop);
+                foreach($this->drops as $drop) {
+                    $checks = [
+                        $this->level->getBlock($this->startPos->add(0, -1))->getId() == Block::DIRT,
+                        $this->level->getBlock($this->startPos->add(0, -2))->getId() == Block::DIRT,
+                        $this->level->getBlock($this->startPos->add(0, -3))->getId() == Block::DIRT
+                    ];
+                    if(($checks[0] || $checks[1] || $checks[2]) && $drop->getId() == Item::SAPLING && TreeCapitator::getInstance()->getConfig()->getNested("auto-sapling", true)) {
+                        $place = null;
+                        switch(true) {
+                            case $checks[0]:
+                                $place = $this->startPos;
+                                break;
+                            case $checks[1]:
+                                $place = $this->startPos->add(0, 1);
+                                break;
+                            case $checks[2]:
+                                $place = $this->startPos->add(0, 2);
+                                break;
+                        }
+                        if($place) {
+                            if($this->level->getBlock($place)->getId() == 0)
+                                $this->level->setBlock($place, Block::get(Block::SAPLING, $drop->getDamage()));
+                            else
+                                $this->level->dropItem($this, $drop);
+                        }
+                    } else
+                        $this->level->dropItem($this, $drop);
+                }
                 $damage = TreeCapitator::getInstance()->getConfig()->getNested("fall-damage", 1);
                 if($damage > 0)
                     foreach($this->getViewers() as $player)
