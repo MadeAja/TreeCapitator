@@ -10,6 +10,7 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\level\Position;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\IntTag;
+use UnexpectedValueException;
 
 class FallingTreeEntity extends Entity {
     public $drops = [];
@@ -38,7 +39,7 @@ class FallingTreeEntity extends Entity {
             $this->namedtag->removeTag("Tile");
         }
         if($blockId === 0)
-            throw new \UnexpectedValueException("Invalid " . get_class($this) . " entity: block ID is 0 or missing");
+            throw new UnexpectedValueException("Invalid " . get_class($this) . " entity: block ID is 0 or missing");
         $damage = $this->namedtag->getByte("Data", 0);
         $this->block = BlockFactory::get($blockId, $damage);
         $this->propertyManager->setInt(self::DATA_VARIANT, $this->block->getRuntimeId());

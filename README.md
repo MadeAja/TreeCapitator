@@ -6,6 +6,10 @@
 [![Star](https://img.shields.io/github/stars/OguzhanUmutlu/TreeCapitator)](https://github.com/OguzhanUmutlu/TreeCapitator/stargazers)
 [![Discord](https://img.shields.io/discord/861949493431500811?color=7389D8&label=discord)](https://discord.gg/uasZzZzH8v)
 
+## Example
+
+![Example](https://github.com/OguzhanUmutlu/TreeCapitator/blob/main/treecapitator.gif)
+
 ## Issues
 
 - You can report bugs by simply clicking [me](https://github.com/OguzhanUmutlu/TreeCapitator/issues)!
