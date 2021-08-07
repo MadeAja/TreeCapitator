@@ -11,8 +11,12 @@ class EventListener implements Listener {
     public function onBreak(BlockBreakEvent $event) {
         $lvl = $event->getBlock()->level->getFolderName();
         $worlds = TreeCapitator::getInstance()->getConfig()->getNested("enabled-worlds");
+        $disabled = TreeCapitator::getInstance()->getConfig()->getNested("disabled-worlds");
         if(!$event->getPlayer()->hasPermission("tree"."capitator.use"))
+            return;
         if(is_array($worlds) && !empty($worlds) && !in_array($lvl, $worlds))
+            return;
+        if(is_array($disabled) && in_array($lvl, $disabled))
             return;
         TreeCapitator::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function(int $currentTick)use($event):void{
             if($event->isCancelled()) return;

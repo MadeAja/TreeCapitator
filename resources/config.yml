@@ -4,6 +4,10 @@ enabled-worlds:
   - world
   - otherworld
 
+# Worlds that plugin won't work, make it disabled-worlds: [] to make it empty
+disabled-worlds:
+  - disabledworld
+
 # Maximum blocks at once
 max-blocks: 32
 
