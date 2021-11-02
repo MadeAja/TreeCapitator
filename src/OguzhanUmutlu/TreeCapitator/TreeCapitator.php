@@ -20,6 +20,28 @@ class TreeCapitator extends PluginBase {
         $this->saveDefaultConfig();
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
         Entity::registerEntity(FallingTreeEntity::class, true, ["FallingTreeEntity"]);
+        $default = [
+            "enabled-worlds" => [
+                "world",
+                "other"."world"
+            ],
+            "disabled-worlds" => [
+                "disabled"."world"
+            ],
+            "max-blocks" => 32,
+            "fall-damage" => 1,
+            "enabled-items" => [
+                271,
+                275
+            ],
+            "disabled-items" => [
+                1
+            ]
+        ];
+        foreach($default as $i => $v) {
+            $this->getConfig()->getNested($i, $v);
+            $this->getLogger()->notice("Couldn't find key " . $i . "! Putting default value to config.yml...");
+        }
     }
 
     /*** @return TreeCapitator */

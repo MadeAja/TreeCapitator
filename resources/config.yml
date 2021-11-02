@@ -15,4 +15,13 @@ max-blocks: 32
 # Type 0 for no damage
 # 2 HP = 1 Heart
 fall-damage: 1 #HP
+
+# Make it enabled-worlds: [] or delete to enable on all worlds
+enabled-items:
+  - 271 # Wooden axe
+  - 275 # Stone axe
+
+# Items that plugin won't work on them, make it disabled-items: [] to make it empty
+disabled-items:
+  - 1 # Stone
 ...
